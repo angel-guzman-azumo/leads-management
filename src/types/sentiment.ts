@@ -1,6 +1,6 @@
 import { Decoder, constant, either, object, string } from "decoders";
 
-export type SentimentValue = "up" | "down";
+export type SentimentValue = "up" | "down" | "none";
 
 export interface Sentiment {
   lead_id: string;

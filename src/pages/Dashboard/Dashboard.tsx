@@ -51,7 +51,9 @@ function useCachedLeads(currentPage: number) {
 
 function LeadsView({ leads }: { leads: Lead[] }) {
   const sentimentReference = useLeadsSentiment({ leads });
-  return leads.map((lead) => <LeadCard key={lead._id} lead={lead} sentiment={sentimentReference[lead._id]} />);
+  return leads.map((lead) => (
+    <LeadCard key={lead._id} lead={lead} sentiment={sentimentReference[lead._id] || "none"} />
+  ));
 }
 
 function useLeadsSentiment({ leads }: { leads: Lead[] }) {

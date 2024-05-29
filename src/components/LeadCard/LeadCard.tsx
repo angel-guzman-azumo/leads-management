@@ -1,17 +1,16 @@
 import classNames from "classnames";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useContactedLeads } from "../../context/ContactedLeadsContext";
 import { LinkedinIcon } from "../../icons/LinkedinIcon/LinkedinIcon";
 import { ThumbsDownIcon } from "../../icons/ThumbsDownIcon/ThumbsDownIcon";
 import { ThumbsUpIcon } from "../../icons/ThumbsUpIcon/ThumbsUpIcon";
 import { UserIcon } from "../../icons/UserIcon/UserIcon";
+import { useDeleteFeedback, useGiveFeedback } from "../../services/api";
 import { Lead } from "../../types/lead";
 import { SentimentValue } from "../../types/sentiment";
 import { Button } from "../Button/Button";
-import { Tooltip } from "../Tooltip/Tooltip";
-import { useDeleteFeedback, useGiveFeedback } from "../../services/api";
-import { CircularProgress } from "../CircularProgress/CircularProgress";
-import { useCallback, useMemo } from "react";
 import { Menu } from "../Menu/Menu";
-import { useContactedLeads } from "../../context/ContactedLeadsContext";
+import { Tooltip } from "../Tooltip/Tooltip";
 
 export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   return (
@@ -26,18 +25,7 @@ export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: Sentiment
 function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   const { isContacted, toggleContacted } = useContactedLeads();
   const contacted = useMemo(() => isContacted(lead._id), [isContacted, lead._id]);
-  const giveFeedbackMutation = useGiveFeedback(lead._id);
-  const deleteFeedbackMutation = useDeleteFeedback(lead._id);
-  const updateFeedback = useCallback(
-    (newSentiment: SentimentValue) => {
-      if (sentiment === newSentiment) {
-        deleteFeedbackMutation.mutate();
-      } else {
-        giveFeedbackMutation.mutate(newSentiment);
-      }
-    },
-    [deleteFeedbackMutation, giveFeedbackMutation, sentiment],
-  );
+  const { localSentiment, updateFeedback } = useLocalSentiment(lead, sentiment);
 
   return (
     <div className="flex flex-row justify-between p-2 px-card items-center">
@@ -49,26 +37,44 @@ function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentV
       </Button>
 
       <div className="flex flex-row gap-2">
-        {giveFeedbackMutation.isPending || deleteFeedbackMutation.isPending ? (
-          <CircularProgress className="w-4 h-4" />
-        ) : (
-          <>
-            <Button variant="ghost" onClick={() => updateFeedback("up")}>
-              <ThumbsUpIcon
-                className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
-              />
-            </Button>
-            <Button variant="ghost" onClick={() => updateFeedback("down")}>
-              <ThumbsDownIcon
-                className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
-              />
-            </Button>
-          </>
-        )}
+        <Button variant="ghost" onClick={() => updateFeedback("up")}>
+          <ThumbsUpIcon
+            className={classNames({ "text-icon": localSentiment !== "up", "text-success": localSentiment === "up" })}
+          />
+        </Button>
+        <Button variant="ghost" onClick={() => updateFeedback("down")}>
+          <ThumbsDownIcon
+            className={classNames({ "text-icon": localSentiment !== "down", "text-error": localSentiment === "down" })}
+          />
+        </Button>
         <Menu lead={lead} />
       </div>
     </div>
   );
+}
+
+function useLocalSentiment(lead: Lead, sentiment: SentimentValue) {
+  const [localSentiment, setLocalSentiment] = useState(sentiment);
+  useEffect(() => {
+    setLocalSentiment(sentiment);
+  }, [lead, sentiment]);
+
+  const giveFeedbackMutation = useGiveFeedback(lead._id);
+  const deleteFeedbackMutation = useDeleteFeedback(lead._id);
+  const updateFeedback = useCallback(
+    (newSentiment: SentimentValue) => {
+      if (sentiment === newSentiment) {
+        deleteFeedbackMutation.mutate();
+        setLocalSentiment("none");
+      } else {
+        giveFeedbackMutation.mutate(newSentiment);
+        setLocalSentiment(newSentiment);
+      }
+    },
+    [deleteFeedbackMutation, giveFeedbackMutation, sentiment],
+  );
+
+  return { localSentiment, updateFeedback };
 }
 
 function LeadCardContent({ lead }: { lead: Lead }) {
