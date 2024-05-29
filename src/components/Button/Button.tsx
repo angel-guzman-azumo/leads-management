@@ -33,7 +33,7 @@ export function Button({
   return (
     <button className={classes} onClick={onClick}>
       {loading ? (
-        <CircularProgress className="w-3 h-3" />
+        <CircularProgress className="!w-3 !h-3" />
       ) : (
         <>
           {children}
