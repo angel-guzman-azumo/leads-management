@@ -1,22 +1,24 @@
+import classNames from "classnames";
 import { LinkedinIcon } from "../../icons/LinkedinIcon/LinkedinIcon";
 import { ThumbsDownIcon } from "../../icons/ThumbsDownIcon/ThumbsDownIcon";
 import { ThumbsUpIcon } from "../../icons/ThumbsUpIcon/ThumbsUpIcon";
 import { UserIcon } from "../../icons/UserIcon/UserIcon";
 import { Lead } from "../../types/lead";
+import { SentimentValue } from "../../types/sentiment";
 import { Button } from "../Button/Button";
 import { Tooltip } from "../Tooltip/Tooltip";
 
-export function LeadCard({ lead }: { lead: Lead }) {
+export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   return (
     <div className="flex flex-col w-card h-card max-h-card border border-borderGray rounded-lg justify-between">
-      <LeadCardHeader />
+      <LeadCardHeader sentiment={sentiment} />
       <LeadCardContent lead={lead} />
       <LeadCardFooter lead={lead} />
     </div>
   );
 }
 
-function LeadCardHeader() {
+function LeadCardHeader({ sentiment }: { sentiment: SentimentValue }) {
   return (
     <div className="flex flex-row justify-between p-2 px-card">
       <Button>
@@ -25,10 +27,14 @@ function LeadCardHeader() {
 
       <div className="flex flex-row gap-2">
         <Button variant="ghost">
-          <ThumbsUpIcon />
+          <ThumbsUpIcon
+            className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
+          />
         </Button>
         <Button variant="ghost">
-          <ThumbsDownIcon />
+          <ThumbsDownIcon
+            className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
+          />
         </Button>
       </div>
     </div>

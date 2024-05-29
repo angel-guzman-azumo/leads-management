@@ -10,11 +10,13 @@
     "@types/axios": "^0.14.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.97",
+    "@types/ramda": "^0.30.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
     "decoders": "^2.4.0",
+    "ramda": "^0.30.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
@@ -53,5 +55,8 @@
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.3"
+  },
+  "overrides": {
+    "typescript": "^5.4.5"
   }
 }

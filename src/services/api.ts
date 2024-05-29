@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { leadsResponseDecoder } from "../types/lead";
+import { array } from "decoders";
+import { sentimentDecoder } from "../types/sentiment";
 
 const API_BASE_URL = "https://api.cashmereai.com/test";
 
@@ -21,3 +23,14 @@ export const useLeads = (page: number = 1, limit: number = 9) => {
     },
   });
 };
+
+export function useLeadsSentiment(leads: string[]) {
+  return useQuery({
+    queryKey: ["leads-sentiment", leads],
+    queryFn: async () => {
+      const response = await api.get("/leads/feedback", { params: { lead_ids: leads } });
+
+      return array(sentimentDecoder).verify(response.data);
+    },
+  });
+}

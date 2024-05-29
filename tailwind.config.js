@@ -8,6 +8,9 @@ module.exports = {
         btn: "#EFEFEF",
         label: "#6F6F6F",
         footer: "#F8F8F8",
+        icon: "#BEBEBE",
+        success: "#61BE92",
+        error: "#EF7A81",
       },
       borderRadius: {
         lg: "16px",

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { useLeads } from "../../services/api";
-import { LeadCard } from "../../components/LeadCard/LeadCard";
-import { Pagination } from "../../components/Pagination/Pagination";
+import { useEffect, useMemo, useState } from "react";
 import { P, match } from "ts-pattern";
 import { CircularProgress } from "../../components/CircularProgress/CircularProgress";
-import { LeadsResponse } from "../../types/lead";
+import { LeadCard } from "../../components/LeadCard/LeadCard";
+import { Pagination } from "../../components/Pagination/Pagination";
+import { useLeadsSentimentReference } from "../../hooks/useLeadsSentimentReference";
+import { useLeads } from "../../services/api";
+import { Lead, LeadsResponse } from "../../types/lead";
 
 export function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +24,7 @@ export function Dashboard() {
         </div>
         <div className="flex flex-wrap gap-4 justify-center h-[563px]">
           {query.isError && <p className="text-red-500 pl-5 w-full">An error occurred</p>}
-          {query.isSuccess && query.data && query.data.leads.map((lead) => <LeadCard key={lead._id} lead={lead} />)}
+          {query.isSuccess && query.data && <LeadsView leads={query.data.leads} />}
         </div>
         {match(query.data)
           .with(P.nullish, () => <Pagination pages={1} currentPage={1} onChange={() => {}} />)
@@ -46,4 +47,14 @@ function useCachedLeads(currentPage: number) {
   }, [query.data]);
 
   return { ...query, data: cachedData };
+}
+
+function LeadsView({ leads }: { leads: Lead[] }) {
+  const sentimentReference = useLeadsSentiment({ leads });
+  return leads.map((lead) => <LeadCard key={lead._id} lead={lead} sentiment={sentimentReference[lead._id]} />);
+}
+
+function useLeadsSentiment({ leads }: { leads: Lead[] }) {
+  const leadsIds = useMemo(() => leads.map((lead) => lead._id), [leads]);
+  return useLeadsSentimentReference(leadsIds);
 }
