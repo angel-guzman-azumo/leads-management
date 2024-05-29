@@ -9,5 +9,13 @@ export interface Sentiment {
 
 export const sentimentDecoder: Decoder<Sentiment> = object({
   lead_id: string,
-  sentiment: either(constant(1), constant(-1)).transform((value) => (value === 1 ? "up" : "down")),
+  sentiment: either(constant(1), constant(-1)).transform(numberToSentiment),
 });
+
+function numberToSentiment(value: number): SentimentValue {
+  return value === 1 ? "up" : "down";
+}
+
+export function sentimentToNumber(sentiment: SentimentValue) {
+  return sentiment === "up" ? 1 : -1;
+}

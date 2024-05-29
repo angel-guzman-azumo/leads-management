@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { leadsResponseDecoder } from "../types/lead";
 import { array } from "decoders";
-import { sentimentDecoder } from "../types/sentiment";
+import { SentimentValue, sentimentDecoder, sentimentToNumber } from "../types/sentiment";
 
 const API_BASE_URL = "https://api.cashmereai.com/test";
 
@@ -31,6 +31,28 @@ export function useLeadsSentiment(leads: string[]) {
       const response = await api.get("/leads/feedback", { params: { lead_ids: leads } });
 
       return array(sentimentDecoder).verify(response.data);
+    },
+  });
+}
+
+export function useGiveFeedback(leadId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (sentiment: SentimentValue) => {
+      await api.put("/leads/feedback", {}, { params: { lead_id: leadId, sentiment: sentimentToNumber(sentiment) } });
+      queryClient.invalidateQueries({ queryKey: ["leads-sentiment"] });
+    },
+  });
+}
+
+export function useDeleteFeedback(leadId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.delete(`/leads/feedback/${leadId}`);
+      queryClient.invalidateQueries({ queryKey: ["leads-sentiment"] });
     },
   });
 }

@@ -1,6 +1,6 @@
 export function CircularProgress({ className = "" }: { className?: string }) {
   return (
-    <div role="status">
+    <div role="status" className="content-center">
       <svg
         aria-hidden="true"
         className={`w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600 ${className}`}

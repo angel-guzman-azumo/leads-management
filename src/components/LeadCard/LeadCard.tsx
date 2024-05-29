@@ -7,36 +7,56 @@ import { Lead } from "../../types/lead";
 import { SentimentValue } from "../../types/sentiment";
 import { Button } from "../Button/Button";
 import { Tooltip } from "../Tooltip/Tooltip";
+import { useDeleteFeedback, useGiveFeedback } from "../../services/api";
+import { CircularProgress } from "../CircularProgress/CircularProgress";
+import { useCallback } from "react";
 
 export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   return (
     <div className="flex flex-col w-card h-card max-h-card border border-borderGray rounded-lg justify-between">
-      <LeadCardHeader sentiment={sentiment} />
+      <LeadCardHeader lead={lead} sentiment={sentiment} />
       <LeadCardContent lead={lead} />
       <LeadCardFooter lead={lead} />
     </div>
   );
 }
 
-function LeadCardHeader({ sentiment }: { sentiment: SentimentValue }) {
+function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
+  const giveFeedbackMutation = useGiveFeedback(lead._id);
+  const deleteFeedbackMutation = useDeleteFeedback(lead._id);
+  const updateFeedback = useCallback(
+    (newSentiment: SentimentValue) => {
+      if (sentiment === newSentiment) {
+        deleteFeedbackMutation.mutate();
+      } else {
+        giveFeedbackMutation.mutate(newSentiment);
+      }
+    },
+    [deleteFeedbackMutation, giveFeedbackMutation, sentiment],
+  );
+
   return (
     <div className="flex flex-row justify-between p-2 px-card">
       <Button>
         <UserIcon />
       </Button>
 
-      <div className="flex flex-row gap-2">
-        <Button variant="ghost">
-          <ThumbsUpIcon
-            className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
-          />
-        </Button>
-        <Button variant="ghost">
-          <ThumbsDownIcon
-            className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
-          />
-        </Button>
-      </div>
+      {giveFeedbackMutation.isPending || deleteFeedbackMutation.isPending ? (
+        <CircularProgress className="w-4 h-4" />
+      ) : (
+        <div className="flex flex-row gap-2">
+          <Button variant="ghost" onClick={() => updateFeedback("up")}>
+            <ThumbsUpIcon
+              className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
+            />
+          </Button>
+          <Button variant="ghost" onClick={() => updateFeedback("down")}>
+            <ThumbsDownIcon
+              className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
+            />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

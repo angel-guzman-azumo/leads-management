@@ -4,9 +4,21 @@ import { match } from "ts-pattern";
 
 export type ButtonVariants = "solid" | "outline" | "ghost";
 
-export function Button({ children, variant = "solid" }: { children: ReactNode; variant?: ButtonVariants }) {
+export function Button({
+  children,
+  variant = "solid",
+  onClick,
+}: {
+  children: ReactNode;
+  variant?: ButtonVariants;
+  onClick?: () => void;
+}) {
   const classes = useMemo(() => classNames("p-1.5 rounded-[5px] min-h-5 min-w-5", variantClasses(variant)), [variant]);
-  return <button className={classes}>{children}</button>;
+  return (
+    <button className={classes} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
 
 function variantClasses(variant: ButtonVariants): string {
