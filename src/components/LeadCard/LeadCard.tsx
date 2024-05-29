@@ -10,6 +10,7 @@ import { Tooltip } from "../Tooltip/Tooltip";
 import { useDeleteFeedback, useGiveFeedback } from "../../services/api";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { useCallback } from "react";
+import { Menu } from "../Menu/Menu";
 
 export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   return (
@@ -36,27 +37,30 @@ function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentV
   );
 
   return (
-    <div className="flex flex-row justify-between p-2 px-card">
+    <div className="flex flex-row justify-between p-2 px-card items-center">
       <Button>
         <UserIcon />
       </Button>
 
-      {giveFeedbackMutation.isPending || deleteFeedbackMutation.isPending ? (
-        <CircularProgress className="w-4 h-4" />
-      ) : (
-        <div className="flex flex-row gap-2">
-          <Button variant="ghost" onClick={() => updateFeedback("up")}>
-            <ThumbsUpIcon
-              className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
-            />
-          </Button>
-          <Button variant="ghost" onClick={() => updateFeedback("down")}>
-            <ThumbsDownIcon
-              className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
-            />
-          </Button>
-        </div>
-      )}
+      <div className="flex flex-row gap-2">
+        {giveFeedbackMutation.isPending || deleteFeedbackMutation.isPending ? (
+          <CircularProgress className="w-4 h-4" />
+        ) : (
+          <>
+            <Button variant="ghost" onClick={() => updateFeedback("up")}>
+              <ThumbsUpIcon
+                className={classNames({ "text-icon": sentiment !== "up", "text-success": sentiment === "up" })}
+              />
+            </Button>
+            <Button variant="ghost" onClick={() => updateFeedback("down")}>
+              <ThumbsDownIcon
+                className={classNames({ "text-icon": sentiment !== "down", "text-error": sentiment === "down" })}
+              />
+            </Button>
+          </>
+        )}
+        <Menu />
+      </div>
     </div>
   );
 }
