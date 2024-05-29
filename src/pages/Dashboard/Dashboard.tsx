@@ -20,7 +20,7 @@ export function Dashboard() {
       <div className="py-[174px] flex flex-col gap-10 w-[1140px]">
         <div className="flex flex-row gap-2 items-center">
           <div className="font-medium front-md ml-4">Contacts Data</div>
-          {query.isFetching && <CircularProgress className="w-5 h-5" />}
+          {query.isFetching && <CircularProgress className="!w-6 !h-6" />}
         </div>
         <div className="flex flex-wrap gap-4 justify-center h-[563px]">
           {query.isError && <p className="text-red-500 pl-5 w-full">An error occurred</p>}
