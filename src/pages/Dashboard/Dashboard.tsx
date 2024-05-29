@@ -16,8 +16,8 @@ export function Dashboard() {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="py-[174px] flex flex-col gap-10 w-[1140px]">
+    <div className="flex justify-center min-w-[1140px]">
+      <div className="py-[174px] flex flex-col gap-10 w-[1140px] min-w-[1140px]">
         <div className="flex flex-row gap-2 items-center">
           <div className="font-medium front-md ml-4">Contacts Data</div>
           {query.isFetching && <CircularProgress className="!w-6 !h-6" />}
