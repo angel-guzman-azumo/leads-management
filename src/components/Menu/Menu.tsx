@@ -5,6 +5,7 @@ import { UserIcon } from "../../icons/UserIcon/UserIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon/DeleteIcon";
 import { Lead } from "../../types/lead";
 import { useDeleteLead } from "../../services/api";
+import { useContactedLeads } from "../../context/ContactedLeadsContext";
 
 export function Menu({ lead }: { lead: Lead }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,12 +27,27 @@ export function Menu({ lead }: { lead: Lead }) {
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            <Button iconRight={<UserIcon />}>Mark as contacted</Button>
+            <ToggleContactedButton lead={lead} onCompleted={() => setIsOpen(false)} />
             <DeleteButton lead={lead} onCompleted={() => setIsOpen(false)} />
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+function ToggleContactedButton({ lead, onCompleted }: { lead: Lead; onCompleted?: () => void }) {
+  const { isContacted, toggleContacted } = useContactedLeads();
+  return (
+    <Button
+      iconRight={<UserIcon />}
+      onClick={() => {
+        toggleContacted(lead._id);
+        onCompleted?.();
+      }}
+    >
+      {isContacted(lead._id) ? "Mark not contacted" : "Mark as contacted"}
+    </Button>
   );
 }
 

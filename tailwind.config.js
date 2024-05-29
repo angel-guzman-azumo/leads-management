@@ -12,6 +12,8 @@ module.exports = {
         success: "#61BE92",
         error: "#EF7A81",
         deleteBtn: "#A09D9D",
+        contacted: "#57C2EF",
+        userIcon: "#4F4F4F",
       },
       borderRadius: {
         lg: "16px",

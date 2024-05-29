@@ -9,8 +9,9 @@ import { Button } from "../Button/Button";
 import { Tooltip } from "../Tooltip/Tooltip";
 import { useDeleteFeedback, useGiveFeedback } from "../../services/api";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Menu } from "../Menu/Menu";
+import { useContactedLeads } from "../../context/ContactedLeadsContext";
 
 export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
   return (
@@ -23,6 +24,8 @@ export function LeadCard({ lead, sentiment }: { lead: Lead; sentiment: Sentiment
 }
 
 function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentValue }) {
+  const { isContacted, toggleContacted } = useContactedLeads();
+  const contacted = useMemo(() => isContacted(lead._id), [isContacted, lead._id]);
   const giveFeedbackMutation = useGiveFeedback(lead._id);
   const deleteFeedbackMutation = useDeleteFeedback(lead._id);
   const updateFeedback = useCallback(
@@ -38,7 +41,10 @@ function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentV
 
   return (
     <div className="flex flex-row justify-between p-2 px-card items-center">
-      <Button>
+      <Button
+        className={classNames({ "bg-contacted text-white": contacted, "text-userIcon": !contacted })}
+        onClick={() => toggleContacted(lead._id)}
+      >
         <UserIcon />
       </Button>
 
