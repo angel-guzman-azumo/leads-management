@@ -3,8 +3,10 @@ import { Button } from "../Button/Button";
 import { DotsThreeVerticalIcon } from "../../icons/DotsThreeVerticalIcon/DotsThreeVerticalIcon";
 import { UserIcon } from "../../icons/UserIcon/UserIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon/DeleteIcon";
+import { Lead } from "../../types/lead";
+import { useDeleteLead } from "../../services/api";
 
-export function Menu() {
+export function Menu({ lead }: { lead: Lead }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -25,12 +27,26 @@ export function Menu() {
             aria-labelledby="options-menu"
           >
             <Button iconRight={<UserIcon />}>Mark as contacted</Button>
-            <Button iconRight={<DeleteIcon />} variant="ghost" className="text-deleteBtn">
-              Delete
-            </Button>
+            <DeleteButton lead={lead} onCompleted={() => setIsOpen(false)} />
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+function DeleteButton({ lead, onCompleted }: { lead: Lead; onCompleted?: () => void }) {
+  const deleteLeadMutation = useDeleteLead(lead._id);
+
+  return (
+    <Button
+      iconRight={<DeleteIcon />}
+      variant="ghost"
+      className="text-deleteBtn"
+      onClick={() => deleteLeadMutation.mutate(undefined, { onSettled: () => onCompleted?.() })}
+      loading={deleteLeadMutation.isPending}
+    >
+      Delete
+    </Button>
   );
 }

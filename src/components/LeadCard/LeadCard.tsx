@@ -59,7 +59,7 @@ function LeadCardHeader({ lead, sentiment }: { lead: Lead; sentiment: SentimentV
             </Button>
           </>
         )}
-        <Menu />
+        <Menu lead={lead} />
       </div>
     </div>
   );

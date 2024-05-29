@@ -24,6 +24,17 @@ export const useLeads = (page: number = 1, limit: number = 9) => {
   });
 };
 
+export function useDeleteLead(leadId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.delete(`/leads/${leadId}`);
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+}
+
 export function useLeadsSentiment(leads: string[]) {
   return useQuery({
     queryKey: ["leads-sentiment", leads],

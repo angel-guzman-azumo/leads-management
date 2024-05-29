@@ -1,7 +1,7 @@
 export function DotsThreeVerticalIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_15_755)">
+      <g clipPath="url(#clip0_15_755)">
         <path
           d="M9.5625 11.0625C10.3909 11.0625 11.0625 10.3909 11.0625 9.5625C11.0625 8.73407 10.3909 8.0625 9.5625 8.0625C8.73407 8.0625 8.0625 8.73407 8.0625 9.5625C8.0625 10.3909 8.73407 11.0625 9.5625 11.0625Z"
           fill="#A1A1A1"

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { ReactNode, useMemo } from "react";
 import { match } from "ts-pattern";
+import { CircularProgress } from "../CircularProgress/CircularProgress";
 
 export type ButtonVariants = "solid" | "outline" | "ghost";
 
@@ -10,12 +11,14 @@ export function Button({
   onClick,
   className = "",
   iconRight,
+  loading = false,
 }: {
   children: ReactNode;
   variant?: ButtonVariants;
   onClick?: () => void;
   className?: string;
   iconRight?: ReactNode;
+  loading?: boolean;
 }) {
   const classes = useMemo(
     () =>
@@ -23,13 +26,20 @@ export function Button({
         "p-1.5 rounded-[5px] min-h-5 min-w-5 text-button flex flex-row justify-between items-center",
         variantClasses(variant),
         className,
+        { "!justify-center": loading },
       ),
-    [variant, className],
+    [variant, className, loading],
   );
   return (
     <button className={classes} onClick={onClick}>
-      {children}
-      {iconRight}
+      {loading ? (
+        <CircularProgress className="w-3 h-3" />
+      ) : (
+        <>
+          {children}
+          {iconRight}
+        </>
+      )}
     </button>
   );
 }
